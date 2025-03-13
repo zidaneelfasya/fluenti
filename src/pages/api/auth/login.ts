@@ -28,7 +28,14 @@ export default async function handler(
   await connectToDatabase();
 
   try {
+    
+    
     const existingUser = await User.findOne({ username });
+
+    
+    if (!existingUser) {
+      return res.status(401).json({ message: "Invalid username or password" });
+    }
     const isPasswordValid = await compare(password, existingUser.password);
     if (!existingUser || !isPasswordValid) {
       return res.status(401).json({ message: "Invalid username or password" });
@@ -51,7 +58,7 @@ export default async function handler(
       maxAge: 24 * 60 * 60,
     });
     
-    const id = serialize("idUser", existingUser._id, {
+      const id = serialize("idUser", existingUser._id.toString(), {
       httpOnly: false,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
