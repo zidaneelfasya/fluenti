@@ -13,4 +13,4 @@ const ThreadSchema = new mongoose.Schema(
 // ThreadSchema.virtual("id_thread").get(function () {
 //   return this._id;
 // });
-export default mongoose.models.Conversation || mongoose.model("Thread", ThreadSchema);
+export default mongoose.models.Thread || mongoose.model("Thread", ThreadSchema);
