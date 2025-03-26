@@ -22,7 +22,7 @@ export default async function createThread(req: NextApiRequest, res: NextApiResp
         message: "User registered successfully",
         thread: savedThread,
         user: me,
-      });
+      });  
   } catch (error: any) {
     return res
       .status(500)
