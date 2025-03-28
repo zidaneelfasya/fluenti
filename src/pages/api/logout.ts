@@ -7,7 +7,10 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
   }
 
   try {
-    
+    // if (!req.cookies.token) {
+    //   return res.status(401).json({ message: "Unauthorized" });
+    // }
+    const me = req.cookies.idUser;
     const cookie = serialize("token", "", {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
@@ -18,7 +21,8 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 
     res.setHeader("Set-Cookie", cookie);
     
-    res.status(200).json({ message: "Logout successful" });
+    res.status(200).json({ message: "Logout successful for " + me,
+     });
   } catch (error: any) {
     res.status(500).json({ message: "Something went wrong", error: error.message });
   }
