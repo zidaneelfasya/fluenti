@@ -30,17 +30,20 @@
     "react-hook-form": "^7.55.0",
     "react-markdown": "^10.1.0",
     "sweetalert2": "^11.17.2",
-    "tailwind-merge": "^3.0.2"
+    "tailwind-merge": "^3.0.2",
+    "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
-    "@tailwindcss/postcss": "^4",
+    "@tailwindcss/typography": "^0.5.16",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "autoprefixer": "^10.4.20",
     "eslint": "^9",
     "eslint-config-next": "15.2.1",
-    "tailwindcss": "^4",
+    "postcss": "^8.5.1",
+    "tailwindcss": "^3.0.0",
     "typescript": "^5"
   }
 }
