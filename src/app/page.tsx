@@ -12,15 +12,15 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
 
 
-  useEffect(()=>{
-    HELPER.Axios('POST', 'api/auth/logout').then(res => {
-      if(res.success) router.replace('/login')
-    })
-  }, [])
+  // useEffect(()=>{
+  //   HELPER.Axios('POST', 'api/auth/logout').then(res => {
+  //     if(res.success) router.replace('/login')
+  //   })
+  // }, [])
   return (
     
     <Button variant="outline" size="default" onClick={async()=>{
-      HELPER.Axios('POST', 'api/auth/logout').then(res => {
+      HELPER.Axios('POST', 'api/logout').then(res => {
         if(res.success) router.replace('/login')
       })
     }}
