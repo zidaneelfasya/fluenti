@@ -50,8 +50,8 @@ export const ChatSidebar = () => {
 
   const fetchThreads = async () => {
     try {
-      const res = await HELPER.Axios("GET", "/api/thread");
-      console.log(res.data.data);
+      const res = await HELPER.Axios("GET", "/api/thread/get");
+      // console.log(res.data.data);
       setThreads(res.data.data);
     } catch (error) {
       console.error("Error fetching threads:", error);
@@ -126,7 +126,7 @@ export const ChatSidebar = () => {
               <SidebarMenu>
                 {threads?.map((thread) => (
                   <SidebarMenuItem key={thread._id}>
-                    <Link href={`/thread/${thread._id}`} passHref legacyBehavior>
+                    <Link href={`/chat/${thread._id}`} passHref legacyBehavior>
                       <SidebarMenuButton isActive={thread._id === activeThread}>
                         {thread.title}
                       </SidebarMenuButton>
