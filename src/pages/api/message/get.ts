@@ -5,7 +5,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 export default async function getMessages(req:NextApiRequest, res: NextApiResponse) {
   try {
     await connectToDatabase();
-    const { thread_id } = req.body;
+    const { thread_id } = req.query;
     // console.log(req.body)
     console.log("thread_Id", thread_id);
     if (!thread_id) {
