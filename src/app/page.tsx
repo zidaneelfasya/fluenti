@@ -14,6 +14,7 @@ export default function Home() {
 
   // useEffect(()=>{
   //   HELPER.Axios('POST', 'api/auth/logout').then(res => {
+  //   HELPER.Axios('POST', 'api/logout').then(res => {
   //     if(res.success) router.replace('/login')
   //   })
   // }, [])
