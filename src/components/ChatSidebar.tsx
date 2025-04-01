@@ -40,18 +40,18 @@ export const ChatSidebar = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [textInput, setTextInput] = useState("");
   const [threads, setThreads] = useState<Thread[]>([]);
+  const [refreshFlag, setRefreshFlag] = useState(false); // Tambahkan state untuk trigger refresh
   const { setTheme, theme } = useTheme();
   const router = useRouter();
   const pathname = usePathname();
 
   useEffect(() => {
     fetchThreads();
-  }, []);
+  }, [refreshFlag]); // Tambahkan refreshFlag sebagai dependency
 
   const fetchThreads = async () => {
     try {
       const res = await HELPER.Axios("GET", "/api/thread/get");
-      // console.log(res.data.data);
       setThreads(res.data.data);
     } catch (error) {
       console.error("Error fetching threads:", error);
@@ -67,14 +67,28 @@ export const ChatSidebar = () => {
   };
 
   useEffect(() => {
-    // Extract thread ID from path like /thread/[id]
     const threadId = pathname ? pathname.split("/")[2] : "";
     setActiveThread(threadId || "");
   }, [pathname]);
 
   const handleCreateThread = async () => {
-    console.log("create thread");
-    // Implement your thread creation logic here
+    try {
+      const response = await HELPER.form("POST", "/api/thread/create", {
+        title: textInput
+      });
+      
+      if (response.success) {
+        // Trigger refresh dengan mengubah state refreshFlag
+        setRefreshFlag(prev => !prev);
+        // Redirect ke thread yang baru dibuat
+        router.push(`/chat/${response.data._id}`);
+      }
+    } catch (error) {
+      console.error("Error creating thread:", error);
+    } finally {
+      setIsDialogOpen(false);
+      setTextInput("");
+    }
   };
 
   return (
@@ -138,7 +152,7 @@ export const ChatSidebar = () => {
           </SidebarGroup>
         </SidebarContent>
         <SidebarFooter>
-          <Button
+          {/* <Button
             className="flex items-center px-2 py-1 space-x-2"
             onClick={async () => {
               try {
@@ -153,7 +167,7 @@ export const ChatSidebar = () => {
             }}
           >
             Logout
-          </Button>
+          </Button> */}
 
           <Button
             onClick={handleToggleTheme}

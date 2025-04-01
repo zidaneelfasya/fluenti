@@ -24,7 +24,7 @@ export default function Chatpage() {
   // const navigate = useNavigate();
   const params = useParams<{ threadId: string }>();
   
-  console.log(params?.threadId)
+  
 
   useEffect(() => {
     const fetchMessages = async () => {

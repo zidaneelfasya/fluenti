@@ -38,11 +38,6 @@ export default function Login() {
         password,
       });
 
-      if (res.success) {
-        localStorage.setItem("token", res.data.data.token); 
-        await new Promise((resolve) => setTimeout(resolve, 100));
-        router.push("/");
-      }
     } catch (error) {
       console.error("Login error:", error);
     } finally {
