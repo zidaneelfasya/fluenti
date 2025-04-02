@@ -37,7 +37,7 @@ export default function Login() {
         username,
         password,
       });
-
+      if (res.success) router.push("/chat");
     } catch (error) {
       console.error("Login error:", error);
     } finally {
