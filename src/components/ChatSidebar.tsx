@@ -74,12 +74,12 @@ export const ChatSidebar = () => {
   const handleCreateThread = async () => {
     try {
       const response = await HELPER.form("POST", "/api/thread/create", {
-        title: textInput
+        title: textInput,
       });
-      
+
       if (response.success) {
         // Trigger refresh dengan mengubah state refreshFlag
-        setRefreshFlag(prev => !prev);
+        setRefreshFlag((prev) => !prev);
         // Redirect ke thread yang baru dibuat
         router.push(`/chat/${response.data._id}`);
       }
@@ -121,9 +121,12 @@ export const ChatSidebar = () => {
         <SidebarHeader>
           <Link
             href="/"
-            className="flex justify-center py-3 mb-4 text-xl font-bold hover:"
+            className="flex items-center justify-center py-3 mb-4 text-xl font-bold"
           >
-            Chicken AI
+            <div className="flex items-center gap-2">
+              <img className="h-10 w-6" src="/logo.png" alt="Fluenti Logo" />
+              <span>Fluenti</span>
+            </div>
           </Link>
           <Button
             onClick={() => setIsDialogOpen(true)}
