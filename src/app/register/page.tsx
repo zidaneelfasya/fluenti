@@ -22,7 +22,7 @@ export default function Register() {
     }
   };
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     HELPER.form("POST", "/api/auth/register", { username, password }).then((res) => {
       if (res.success) router.push("/login");
@@ -52,7 +52,7 @@ export default function Register() {
           </div>
 
           <div className="p-8">
-            <form onSubmit={handleLogin}>
+            <form onSubmit={handleRegister}>
               {/* Email Input */}
               <div className="mb-6">
                 <label htmlFor="username" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
