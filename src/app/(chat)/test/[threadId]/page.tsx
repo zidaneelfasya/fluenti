@@ -118,7 +118,7 @@ export default function Chatpage() {
 
   return (
     <div className="flex flex-col flex-1">
-      <header className="flex items-center px-4 h-16">
+      <header className="flex items-center px-4">
         <h1 className="text-xl font-bold ml-4">Chat</h1>
       </header>
 
@@ -140,7 +140,7 @@ export default function Chatpage() {
           <div ref={messagesEndRef} />
         </div>
       </main>
-      <footer className="border-t p-4">
+      <footer className="p-4">
         <div className="max-w-3xl mx-auto flex gap-2">
           <Textarea
             className="flex-1"

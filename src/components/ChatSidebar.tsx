@@ -92,7 +92,7 @@ export const ChatSidebar = () => {
   };
 
   return (
-    <>
+    <div className="bg-[#030712] shadow-[4px_0_6px_-1px_rgba(0,0,0,0.1),2px_0_4px_-2px_rgba(0,0,0,0.1)] dark:shadow-[4px_0_6px_-1px_rgba(0,0,0,0.3),2px_0_4px_-2px_rgba(0,0,0,0.2)]">
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent>
           <DialogHeader>
@@ -124,16 +124,17 @@ export const ChatSidebar = () => {
             className="flex items-center justify-center py-3 mb-4 text-xl font-bold"
           >
             <div className="flex items-center gap-2">
-              <img className="h-10 w-6" src="/logo.png" alt="Fluenti Logo" />
-              <span>Fluenti</span>
+              <img className="h-10 w-full" src="/logo.png" alt="Fluenti Logo" />
+              {/* <span>Fluenti</span> */}
             </div>
           </Link>
           <Button
             onClick={() => setIsDialogOpen(true)}
-            className="w-full py-5 justify-start bg-primary text-primary-foreground text-md"
+            className=" w-full py-5 justify-center bg-primary text-primary-foreground text-md rounded-[8px] "
           >
-            <Plus className="mr-2 h-4 w-4" />
-            New Chat
+            {/* <Plus className="mr-2 h-4 w-4" /> */}
+            <img className="h-4 w-4" src="chat-plus.png" alt="Fluenti Logo" />
+            Start Chatting ...
           </Button>
         </SidebarHeader>
         <SidebarContent>
@@ -183,6 +184,6 @@ export const ChatSidebar = () => {
           </Button>
         </SidebarFooter>
       </SidebarPrimitive>
-    </>
+    </div>
   );
 };

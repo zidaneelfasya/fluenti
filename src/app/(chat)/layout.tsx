@@ -13,7 +13,7 @@ export default function ChatLayout({
 
   return (
     <SidebarProvider open={sidebarOpen} onOpenChange={setSidebarOpen}>
-      <div className="flex h-screen bg-background w-full">
+      <div className="flex h-screen bg-background  w-full">
         <ChatSidebar />
         {children} {/* Gunakan children bukan impor langsung */}
       </div>
