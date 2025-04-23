@@ -7,7 +7,7 @@ const NoChatpage = () => {
 
   return (
     <div className="flex flex-col flex-1">
-      <header className="flex items-center px-4 h-16 border-b">
+      <header className="flex items-center px-4 h-16">
         <h1 className="text-xl font-bold ml-4">Chat</h1>
       </header>
       <div className="w-full flex flex-1 flex-col items-center justify-center p-16">
