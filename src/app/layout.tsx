@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { ThemeProvider } from "@/components/ThemeProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,24 +28,26 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <div 
-          id="loading" 
+        <div
+          id="loading"
           style={{
-            display: 'none',
-            position: 'fixed',
+            display: "none",
+            position: "fixed",
             top: 0,
             left: 0,
             right: 0,
             bottom: 0,
-            backgroundColor: 'rgba(0,0,0,0.5)',
+            backgroundColor: "rgba(0,0,0,0.5)",
             zIndex: 9999,
-            justifyContent: 'center',
-            alignItems: 'center'
+            justifyContent: "center",
+            alignItems: "center",
           }}
         >
           <div>Loading...</div>
         </div>
-        {children}
+        <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );

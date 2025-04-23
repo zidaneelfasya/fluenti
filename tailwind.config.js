@@ -15,6 +15,7 @@ module.exports = {
         sm: 'calc(var(--radius) - 4px)'
       },
       colors: {
+        sidebarcolor: 'hsl(var(--bg-chatsidebar))',
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',

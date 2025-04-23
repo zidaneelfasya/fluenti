@@ -118,11 +118,12 @@ export default function Chatpage() {
 
   return (
     <div className="flex flex-col flex-1">
-      <header className="flex items-center px-4 h-16 border-b">
+      <header className="flex items-center px-4 h-16">
         <h1 className="text-xl font-bold ml-4">Chat</h1>
       </header>
-
+      
       <main className="flex-1 overflow-auto p-4 w-full">
+        
         <div className="mx-auto space-y-4 pb-20 max-w-screen-md">
           {messages?.map((message, index) => (
             <ChatMessage
@@ -164,6 +165,7 @@ export default function Chatpage() {
             send
           </Button>
         </div>
+        
       </footer>
     </div>
   );

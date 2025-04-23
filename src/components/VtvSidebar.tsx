@@ -35,7 +35,7 @@ interface Thread {
   title: string;
 }
 
-export const ChatSidebar = () => {
+export const VtvSidebar = () => {
   const [activeThread, setActiveThread] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [textInput, setTextInput] = useState("");
@@ -94,7 +94,7 @@ export const ChatSidebar = () => {
   return (
     <div className="bg-sidebarcolor border-hidden  shadow-[4px_0_6px_-1px_rgba(0,0,0,0.1),2px_0_4px_-2px_rgba(0,0,0,0.1)] dark:shadow-[4px_0_6px_-1px_rgba(0,0,0,0.3),2px_0_4px_-2px_rgba(0,0,0,0.2)]">
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent> 
+        <DialogContent>
           <DialogHeader>
             <DialogTitle>Create New Threads</DialogTitle>
           </DialogHeader>
@@ -134,7 +134,7 @@ export const ChatSidebar = () => {
           >
             {/* <Plus className="mr-2 h-4 w-4" /> */}
             <img className="h-4 w-4" src="chat-plus.png" alt="Fluenti Logo" />
-            Start Chatting ...
+            make a conversation ...
           </Button>
         </SidebarHeader>
         <SidebarContent>
@@ -144,7 +144,7 @@ export const ChatSidebar = () => {
               <SidebarMenu>
                 {threads?.map((thread) => (
                   <SidebarMenuItem key={thread._id}>
-                    <Link href={`/chat/${thread._id}`} passHref legacyBehavior>
+                    <Link href={`/vtv/${thread._id}`} passHref legacyBehavior>
                       <SidebarMenuButton isActive={thread._id === activeThread}>
                         {thread.title}
                       </SidebarMenuButton>
@@ -176,7 +176,7 @@ export const ChatSidebar = () => {
           <Button
             onClick={handleToggleTheme}
             variant="ghost"
-            className="w-full justify-start "
+            className="w-full justify-start mb-14"
           >
             {theme === "dark" ? (
               <>
