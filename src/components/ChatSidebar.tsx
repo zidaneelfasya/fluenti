@@ -92,9 +92,9 @@ export const ChatSidebar = () => {
   };
 
   return (
-    <div className="bg-[#030712] shadow-[4px_0_6px_-1px_rgba(0,0,0,0.1),2px_0_4px_-2px_rgba(0,0,0,0.1)] dark:shadow-[4px_0_6px_-1px_rgba(0,0,0,0.3),2px_0_4px_-2px_rgba(0,0,0,0.2)]">
+    <div className="bg-sidebarcolor border-hidden  shadow-[4px_0_6px_-1px_rgba(0,0,0,0.1),2px_0_4px_-2px_rgba(0,0,0,0.1)] dark:shadow-[4px_0_6px_-1px_rgba(0,0,0,0.3),2px_0_4px_-2px_rgba(0,0,0,0.2)]">
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent>
+        <DialogContent> 
           <DialogHeader>
             <DialogTitle>Create New Threads</DialogTitle>
           </DialogHeader>
@@ -176,11 +176,20 @@ export const ChatSidebar = () => {
           <Button
             onClick={handleToggleTheme}
             variant="ghost"
-            className="w-full justify-start"
+            className="w-full justify-start "
           >
-            <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-            <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-            Toggle Theme
+            {theme === "dark" ? (
+              <>
+                <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all" />
+                <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all" />
+              </>
+            ) : (
+              <>
+                <Sun className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all" />
+                <Moon className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all" />
+              </>
+            )}
+            <span className="ml-2">Toggle Theme</span>
           </Button>
         </SidebarFooter>
       </SidebarPrimitive>
