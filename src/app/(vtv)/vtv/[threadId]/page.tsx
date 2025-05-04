@@ -23,7 +23,7 @@ const vtv = () => {
     const fetchMessages = async () => {
       if (!params?.threadId) return;
 
-      console.log(params?.threadId);
+      // console.log(params?.threadId); 
       const response = await HELPER.Axios("GET", "/api/message/get", {
         thread_id: params.threadId,
       });
@@ -116,29 +116,57 @@ const vtv = () => {
     }
   };
 
-  const handleRecordingComplete = (audioBlob: Blob) => {
-    console.log("Audio recording complete:", audioBlob);
-    const url = URL.createObjectURL(audioBlob);
-    setAudioUrl(url);
-    console.log("Audio URL:", url);
-    const a = document.createElement('a');
-    a.href = audioUrl || "";
-    a.download = `recording-${new Date().toISOString()}.mp3`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+  const handleRecordingComplete = async (audioBlob: Blob) => {
+    try {
+      setIsLoading(true);
+      
+      // 1. Buat URL dari Blob
+      const audioUrl = URL.createObjectURL(audioBlob);
+      
+      // 2. Buat elemen audio untuk diputar
+      const audio = new Audio(audioUrl);
+      
+      // 3. Inisialisasi SpeechRecognition dengan type checking
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      
+      if (!SpeechRecognition) {
+        throw new Error('Speech Recognition API tidak didukung di browser ini');
+      }
+  
+      const recognition = new SpeechRecognition();
+      recognition.lang = 'en-US';
+      recognition.interimResults = false;
+      
+      // 4. Promise wrapper untuk menunggu hasil
+      const transcript = await new Promise<string>((resolve, reject) => {
+        recognition.onresult = (event: any) => {
+          const transcript = event.results[0][0].transcript;
+          resolve(transcript);
+        };
+        
+        recognition.onerror = (event: any) => {
+          reject(new Error(`Error recognition: ${event.error}`));
+        };
+        
+        // Mulai pemrosesan
+        audio.play();
+        recognition.start();
+      });
+  
+      console.log('Hasil transkripsi suara:', transcript);
+      setMessageInput(transcript);
+  
+    } catch (error) {
+      console.error('Error dalam handleRecordingComplete:', error);
+      HELPER.showAlert("error", {
+        text: error instanceof Error ? error.message : "Gagal memproses rekaman suara",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  // const handleDownloadAudio = () => {
-  //   if (!audioUrl) return;
-    
-  //   const a = document.createElement('a');
-  //   a.href = audioUrl;
-  //   a.download = `recording-${new Date().toISOString()}.wav`;
-  //   document.body.appendChild(a);
-  //   a.click();
-  //   document.body.removeChild(a);
-  // };
+
 
   // Clean up audio URL when component unmounts
   useEffect(() => {

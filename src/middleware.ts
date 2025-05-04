@@ -11,7 +11,9 @@ export function middleware(request: NextRequest) {
     "/login",
     "/register",
     "/api/auth/login",
-    "/api/auth/register"
+    "/api/auth/register",
+    "/api/testdb"
+
   ];
 
   // Cek jika path saat ini adalah public path
