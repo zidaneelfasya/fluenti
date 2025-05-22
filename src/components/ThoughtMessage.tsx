@@ -3,7 +3,7 @@ import { Separator } from "./ui/separator";
 
 
 type ThoughtMessageProps = {
-  thought: string;
+  thought: any;
 };
 
 export const ThoughtMessage = (props: ThoughtMessageProps) => {
@@ -11,7 +11,7 @@ export const ThoughtMessage = (props: ThoughtMessageProps) => {
     <Accordion type="single" collapsible>
       <AccordionItem  value="thought">
         <AccordionTrigger className="text-sm italic px-2 py-1 bg-secondary rounded-lg">
-          AI thought
+          Correction
         </AccordionTrigger>
         <AccordionContent className="p-4 relative rounded text-muted-foreground text-sm flex">
           <Separator
