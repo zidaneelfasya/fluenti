@@ -1,13 +1,27 @@
 import ReactMarkdown from "react-markdown";
 import { ThoughtMessage } from "./ThoughtMessage";
+import { useEffect, useRef } from "react";
 
 interface ChatMessageProps {
   role: "user" | "assistant";
   content: string;
   thought?: string;
+  audioUrl?: string 
 }
 
 export const ChatMessage = (props: ChatMessageProps) => {
+  const audioRef = useRef<HTMLAudioElement>(null);
+
+  useEffect(() => {
+    if (props.audioUrl && audioRef.current) {
+      audioRef.current.src = props.audioUrl;
+      // Auto-play hanya untuk pesan asisten
+      if (props.role === "assistant") {
+        audioRef.current.play().catch(e => console.error("Audio play error:", e));
+      }
+    }
+  }, [props.audioUrl, props.role]);
+
   const isAssistant = props.role === "assistant";
   return (
     <>
@@ -26,7 +40,7 @@ export const ChatMessage = (props: ChatMessageProps) => {
         }`}
       >
         <div className={isAssistant ? "prose dark:prose-invert": ""}>
-          <ReactMarkdown>{props.content.trim()}</ReactMarkdown>
+        <ReactMarkdown>{typeof props.content === 'string' ? props.content.trim() : ''}</ReactMarkdown>
         </div>
       </div>
     </div>

@@ -3,10 +3,7 @@ import Message from "@/models/Message";
 import ollama from "ollama";
 import { NextApiRequest, NextApiResponse } from "next";
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   // Set header SSE
   res.setHeader("Content-Type", "text/event-stream");
   res.setHeader("Cache-Control", "no-cache");
@@ -25,24 +22,12 @@ export default async function handler(
       thread_id: thread_id,
     });
     await userMessage.save();
-    const prompt = `
-    Saya ingin kamu bertindak sebagai grammar corrector dan pemberi respons percakapan.
-    Berikut adalah aturannya:
-    
-    1. Koreksi kalimat saya jika ada kesalahan grammar.
-    2. Masukkan kalimat yang sudah dikoreksi ke dalam tag <correction>...</correction>.
-    3. Buatlah respons percakapan (berdasarkan kalimat yang dikoreksi) dan masukkan ke dalam tag <conversation>...</conversation>.
-    4. Jangan menjelaskan apapun, hanya tampilkan dua tag tersebut.
-    
-    Kalimat saya: """${messages}"""
-    `;
+
     const stream = await ollama.chat({
       // model: "deepseek-r1:8b",
-      // model: "mistral",
-      model: "AfinAtsal/Grammar-Chechker",
-
-
-      messages: [{ role: "user", content: prompt }],
+      model: "deepseek-r1:8b",
+      
+      messages: [{ role: "user", content: messages }],
       stream: true,
     });
 
@@ -53,8 +38,6 @@ export default async function handler(
     for await (const part of stream) {
       const messageContent = part.message.content;
       let eventData = {};
-      fullContent += messageContent;
-      eventData = { type: "message", content: fullContent };
 
       if (outputMode === "think") {
         if (!messageContent.includes("</think>")) {
@@ -76,7 +59,7 @@ export default async function handler(
     const newMessage = new Message({
       role: "assistant",
       content: fullContent,
-      thought: "",
+      thought: fullThought,
       thread_id: thread_id,
     });
     await newMessage.save();
@@ -85,9 +68,7 @@ export default async function handler(
     res.write(`data: ${JSON.stringify({ type: "done" })}\n\n`);
   } catch (error) {
     console.error("Error:", error);
-    res.write(
-      `data: ${JSON.stringify({ error: "Internal server error" })}\n\n`
-    );
+    res.write(`data: ${JSON.stringify({ error: "Internal server error" })}\n\n`);
   } finally {
     res.end();
   }
