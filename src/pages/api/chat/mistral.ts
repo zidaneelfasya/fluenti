@@ -25,12 +25,24 @@ export default async function handler(
       thread_id: thread_id,
     });
     await userMessage.save();
-
+    const prompt = `
+    Saya ingin kamu bertindak sebagai grammar corrector dan pemberi respons percakapan.
+    Berikut adalah aturannya:
+    
+    1. Koreksi kalimat saya jika ada kesalahan grammar.
+    2. Masukkan kalimat yang sudah dikoreksi ke dalam tag <correction>...</correction>.
+    3. Buatlah respons percakapan (berdasarkan kalimat yang dikoreksi) dan masukkan ke dalam tag <conversation>...</conversation>.
+    4. Jangan menjelaskan apapun, hanya tampilkan dua tag tersebut.
+    
+    Kalimat saya: """${messages}"""
+    `;
     const stream = await ollama.chat({
       // model: "deepseek-r1:8b",
-      model: "mistral",
+      // model: "mistral",
+      model: "AfinAtsal/Grammar-Chechker",
 
-      messages: [{ role: "user", content: messages }],
+
+      messages: [{ role: "user", content: prompt }],
       stream: true,
     });
 
@@ -44,18 +56,18 @@ export default async function handler(
       fullContent += messageContent;
       eventData = { type: "message", content: fullContent };
 
-      // if (outputMode === "think") {
-      //   if (!messageContent.includes("</think>")) {
-      //     fullThought += messageContent;
-      //     eventData = { type: "thought", content: fullThought };
-      //   } else {
-      //     outputMode = "response";
-      //     eventData = { type: "thought_end" };
-      //   }
-      // } else {
-      //   fullContent += messageContent;
-      //   eventData = { type: "message", content: fullContent };
-      // }
+      if (outputMode === "think") {
+        if (!messageContent.includes("</think>")) {
+          fullThought += messageContent;
+          eventData = { type: "thought", content: fullThought };
+        } else {
+          outputMode = "response";
+          eventData = { type: "thought_end" };
+        }
+      } else {
+        fullContent += messageContent;
+        eventData = { type: "message", content: fullContent };
+      }
 
       res.write(`data: ${JSON.stringify(eventData)}\n\n`);
     }
