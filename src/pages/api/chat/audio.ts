@@ -14,7 +14,8 @@ export const config = {
 
 async function transcribeWithWhisper(audioBuffer: Buffer): Promise<string> {
   const formData = new FormData();
-  const blob = new Blob([audioBuffer], { type: "audio/webm" });
+  const uint8Array = new Uint8Array(audioBuffer);
+  const blob = new Blob([uint8Array], { type: "audio/webm" });
   formData.append("audio", blob, "recording.webm");
 
   const WHISPER_API_URL =
@@ -115,27 +116,34 @@ export default async function handler(
     await userMessage.save();
 
     // Grammar correction
-    const prompt = `
-    I want you to act as a grammar corrector and a conversation responder.
-    Please follow these strict rules:
+    // const prompt = `
+    // I want you to act as a grammar corrector and a conversation responder.
+    // Please follow these strict rules:
     
-    1. If there is any grammar mistake in my sentence, correct it. If there is no correction needed, generate this text "No Need Correction".
-    2. Only give the correction, just the correction, and nothing else.
+    // 1. If there is any grammar mistake in my sentence, correct it. If there is no correction needed, generate this text "No Need Correction".
+    // 2. Only give the correction, just the correction, and nothing else.
   
-    Here is my sentence: """${transcription}"""
-    `;
+    // Here is my sentence: """${transcription}"""
+    // `;
     
-    const correctionResponse = await ollama.chat({
-      model: "AfinAtsal/Grammar-Chechker",
-      messages: [{ role: "user", content: prompt }],
-      stream: false,
-    });
+    // const correctionResponse = await ollama.chat({
+    //   model: "AfinAtsal/Grammar-Chechker",
+    //   messages: [{ role: "user", content: prompt }],
+    //   stream: false,
+    // });
 
+    const correctionResponse = await axios.post('http://172.16.15.187:8000/correct', {
+      text: transcription
+    })
+    const normalizeText = (text: string) => {
+      return text.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, '').trim();
+    };
+    
     let correction = "No Need Correction";
-    if (!correctionResponse.message.content.includes("No Need Correction") || 
-        !correctionResponse.message.content.includes(transcription)) {
-      correction = correctionResponse.message.content;
+    if (normalizeText(correctionResponse.data.corrected) !== normalizeText(transcription)) {
+      correction = correctionResponse.data.corrected;
     }
+
     let mode: true | false = true;
 
     let messages = correction;
@@ -154,7 +162,7 @@ export default async function handler(
     `;
 
     const conversationResponse = await ollama.chat({
-      model: "llama3:8b",
+      model: "gemma3:4b",
       messages: [{ role: "user", content: promptConversation }],
       stream: false,
     });
