@@ -97,14 +97,6 @@ const vtv = () => {
     }
   };
 
-  useEffect(() => {
-    if (audioUrl && audioRef.current) {
-      audioRef.current.src = audioUrl;
-      audioRef.current
-        .play()
-        .catch((e) => console.error("Audio play error:", e));
-    }
-  }, [audioUrl]);
 
   const handleModeChange = (value: string) => {
     if (!params?.threadId) return;
