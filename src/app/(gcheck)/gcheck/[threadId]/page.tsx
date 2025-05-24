@@ -75,29 +75,32 @@ export default function gcheck() {
   const handleSubmit = async () => {
     try {
       setIsLoading(true);
+
       const currentMessage = textareaValue.trim();
       setTextareaValue(""); // Clear textarea immediately
+      const userMessage = {
+        role: "user",
+        content: textareaValue,
+        thought: "",
+        thread_id: params?.threadId,
+      };
 
-      const response = await axios.post("/api/chat/grammar-checker/chat", {
+      setMessages((prev) => [...prev, userMessage]);
+
+      const response = await axios.post("/api/chat/grammar-check/correct", {
         messages: currentMessage,
         thread_id: params?.threadId,
       });
 
       if (response.data) {
         // Update messages with the new response
-        setMessages((prev) => [
-          ...prev,
-          {
-            role: "user",
-            content: response.data.messages,
-          },
-        ]);
+
         setMessages((prev) => [
           ...prev,
           {
             role: "assistant",
-            content: response.data.conversation,
-            correction: response.data.correction,
+            content: response.data.correction,
+            
           },
         ]);
       }
@@ -109,17 +112,20 @@ export default function gcheck() {
   };
 
   const handleModeChange = (value: string) => {
-    if (!params?.threadId) return;
+   
 
     switch (value) {
       case "vtv":
-        router.push(`/vtv/${params.threadId}`);
+        router.push(`/voice-to-voice`);
         break;
       case "vtt":
-        router.push(`/vtt/${params.threadId}`);
+        router.push(`/voice-to-text`);
         break;
-      case "fluenti":
-        // Add fluency route here if needed
+      case "vtv-gcheck":
+        router.push(`/vtv-gcheck`);
+        break;
+      case "ttt":
+        router.push(`/text-to-text`);
         break;
       default:
         break;
@@ -129,7 +135,6 @@ export default function gcheck() {
   return (
     <div className="flex flex-col flex-1">
       <header className="flex items-center px-4 h-16 border-b justify-between">
-        <h1 className="text-xl font-bold ml-4">Chat</h1>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline">Grammar check</Button>
@@ -141,8 +146,11 @@ export default function gcheck() {
             <DropdownMenuItem onClick={() => handleModeChange("vtt")}>
               Voice-to-Text
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleModeChange("fluenti")}>
-              Fluency
+            <DropdownMenuItem onClick={() => handleModeChange("vtv-gcheck")}>
+              vtv-gcheck
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleModeChange("ttt")}>
+              Text-to-Text
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -154,7 +162,6 @@ export default function gcheck() {
               key={index}
               role={message.role}
               content={message.content}
-              thought={message.correction}
             />
           ))}
           <div ref={messagesEndRef} />
