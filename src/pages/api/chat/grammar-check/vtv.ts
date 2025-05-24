@@ -18,9 +18,13 @@ async function transcribeWithWhisper(audioBuffer: Buffer): Promise<string> {
   const blob = new Blob([uint8Array], { type: "audio/webm" });
   formData.append("audio", blob, "recording.webm");
 
-  const WHISPER_API_URL =
-    process.env.WHISPER_API_URL || "http://localhost:8000/transcribe";
+  const WHISPER_API_URL = process.env.WHISPER_API_URL;
 
+  if (!WHISPER_API_URL) {
+    throw new Error(
+      "WHISPER_API_URL is not defined in the environment variables."
+    );
+  }
   const response = await fetch(WHISPER_API_URL, {
     method: "POST",
     body: formData,
@@ -34,11 +38,13 @@ async function transcribeWithWhisper(audioBuffer: Buffer): Promise<string> {
   return result.text;
 }
 
-async function textToSpeechWithElevenLabs(text: string): Promise<string | null> {
+async function textToSpeechWithElevenLabs(
+  text: string
+): Promise<string | null> {
   try {
-    const ELEVENLABS_API_KEY = "sk_c89e8f6793a9721293f9a4371091536770bfbe02df336d93";
-    const ELEVENLABS_VOICE_ID = "29vD33N1CtxCmqQRPOHJ";
-
+    const ELEVENLABS_API_KEY = process.env.ELEVENLABS_API_KEY;
+    const ELEVENLABS_VOICE_ID = process.env.ELEVENLABS_VOICE_ID;
+    
     const response = await axios.post(
       `https://api.elevenlabs.io/v1/text-to-speech/${ELEVENLABS_VOICE_ID}`,
       {
@@ -46,27 +52,26 @@ async function textToSpeechWithElevenLabs(text: string): Promise<string | null> 
         model_id: "eleven_multilingual_v2",
         voice_settings: {
           stability: 0.5,
-          similarity_boost: 0.5
-        }
+          similarity_boost: 0.5,
+        },
       },
       {
         headers: {
           "xi-api-key": ELEVENLABS_API_KEY,
           "Content-Type": "application/json",
-          "accept": "audio/mpeg"
+          accept: "audio/mpeg",
         },
-        responseType: "arraybuffer"
+        responseType: "arraybuffer",
       }
     );
 
     const audioBuffer = Buffer.from(response.data);
     return `data:audio/mpeg;base64,${audioBuffer.toString("base64")}`;
   } catch (error) {
-    console.error("Error with ElevenLabs TTS:",  error);
+    console.error("Error with ElevenLabs TTS:", error);
     return null;
   }
 }
-
 
 export default async function handler(
   req: NextApiRequest,
@@ -116,36 +121,52 @@ export default async function handler(
     await userMessage.save();
 
     // Grammar correction
-    const prompt = `
-    I want you to act as a grammar corrector and a conversation responder.
-    Please follow these strict rules:
-    
-    1. If there is any grammar mistake in my sentence, correct it. If there is no correction needed, generate this text "No Need Correction".
-    2. Only give the correction, just the correction, and nothing else.
-  
-    Here is my sentence: """${transcription}"""
-    `;
-    
-    const correctionResponse = await ollama.chat({
-      model: "AfinAtsal/Grammar-Chechker",
-      messages: [{ role: "user", content: prompt }],
-      stream: false,
-    });
+    // const prompt = `
+    // I want you to act as a grammar corrector and a conversation responder.
+    // Please follow these strict rules:
+
+    // 1. If there is any grammar mistake in my sentence, correct it. If there is no correction needed, generate this text "No Need Correction".
+    // 2. Only give the correction, just the correction, and nothing else.
+
+    // Here is my sentence: """${transcription}"""
+    // `;
+
+    // const correctionResponse = await ollama.chat({
+    //   model: "AfinAtsal/Grammar-Chechker",
+    //   messages: [{ role: "user", content: prompt }],
+    //   stream: false,
+    // });
+
+    const correctionResponse = await axios.post(
+      "http://localhost:5000/correct",
+      {
+        text: transcription,
+      }
+    );
+    const normalizeText = (text: string) => {
+      return text
+        .toLowerCase()
+        .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "")
+        .trim();
+    };
 
     let correction = "No Need Correction";
-    if (!correctionResponse.message.content.includes("No Need Correction") || 
-        !correctionResponse.message.content.includes(transcription)) {
-      correction = correctionResponse.message.content;
+    if (
+      normalizeText(correctionResponse.data.corrected) !==
+      normalizeText(transcription)
+    ) {
+      correction = correctionResponse.data.corrected;
     }
+
     let mode: true | false = true;
 
     let messages = correction;
     console.log("correction : ", correction);
     if (correction == "No Need Correction") {
-      mode = false
-      messages = transcription 
+      mode = false;
+      messages = transcription;
     }
-    console.log("messages: ",messages)
+    console.log("messages: ", messages);
 
     // Generate conversation
     const promptConversation = `
@@ -155,12 +176,22 @@ export default async function handler(
     `;
 
     const conversationResponse = await ollama.chat({
-      model: "llama3:8b",
+      model: "gemma3:4b",
       messages: [{ role: "user", content: promptConversation }],
       stream: false,
     });
 
     const conversation = conversationResponse.message.content;
+
+    let audioUrl = null;
+    // Generate audio from the conversation
+    if (mode == true) {
+      audioUrl = await textToSpeechWithElevenLabs(
+        "here's your corected answer " + correction + "." + conversation
+      );
+    } else if (mode == false) {
+      audioUrl = await textToSpeechWithElevenLabs(conversation);
+    }
 
     // Save AI message
     const newMessage = new Message({
@@ -176,7 +207,8 @@ export default async function handler(
       success: true,
       conversation,
       correction,
-      transcription
+      transcription,
+      audioUrl,
     });
   } catch (error) {
     console.error("Error:", error);

@@ -35,7 +35,7 @@ interface Thread {
   title: string;
 }
 
-export const VtvSidebar = () => {
+export const GcheckSidebar = () => {
   const [activeThread, setActiveThread] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [textInput, setTextInput] = useState("");
@@ -51,7 +51,7 @@ export const VtvSidebar = () => {
 
   const fetchThreads = async () => {
     try {
-      const res = await HELPER.Axios("GET", "/api/thread/vtv/get");
+      const res = await HELPER.Axios("GET", "/api/thread/gcheck/get");
       setThreads(res.data.data);
     } catch (error) {
       console.error("Error fetching threads:", error);
@@ -75,14 +75,14 @@ export const VtvSidebar = () => {
     try {
       const response = await HELPER.form("POST", "/api/thread/create", {
         title: textInput,
-        feature: "voice-to-voice",
+        feature: "grammar-check",
       });
 
       if (response.success) {
         // Trigger refresh dengan mengubah state refreshFlag
         setRefreshFlag((prev) => !prev);
         // Redirect ke thread yang baru dibuat
-        router.push(`/voice-to-voice/${response.data.thread._id}`);
+        router.push(`/gcheck/${response.data.thread._id}`);
       }
     } catch (error) {
       console.error("Error creating thread:", error);
@@ -145,7 +145,7 @@ export const VtvSidebar = () => {
               <SidebarMenu>
                 {threads?.map((thread) => (
                   <SidebarMenuItem key={thread._id}>
-                    <Link href={`/voice-to-voice/${thread._id}`} passHref legacyBehavior>
+                    <Link href={`/gcheck/${thread._id}`} passHref legacyBehavior>
                       <SidebarMenuButton isActive={thread._id === activeThread}>
                         {thread.title}
                       </SidebarMenuButton>

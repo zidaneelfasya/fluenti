@@ -17,7 +17,6 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useCallback } from "react";
 import axios from "axios";
 import debounce from "lodash/debounce";
-import { GrammarCorrectionMessage } from "@/components/GrammarCorrectionMessage";
 
 export default function gcheck() {
   const [messages, setMessages] = useState<any[]>([]);
@@ -76,31 +75,37 @@ export default function gcheck() {
   const handleSubmit = async () => {
     try {
       setIsLoading(true);
-
-      const currentMessage = textareaValue.trim();
-      setTextareaValue(""); // Clear textarea immediately
       const userMessage = {
         role: "user",
-        content: currentMessage,
+        content: textareaValue,
         thought: "",
         thread_id: params?.threadId,
       };
 
       setMessages((prev) => [...prev, userMessage]);
+      const currentMessage = textareaValue.trim();
+      setTextareaValue(""); // Clear textarea immediately
 
-      const response = await axios.post("/api/chat/grammar-check/correct", {
+      const response = await axios.post("/api/chat/grammar-check/ttt", {
         messages: currentMessage,
         thread_id: params?.threadId,
       });
 
       if (response.data) {
+        // // Update messages with the new response
+        // setMessages((prev) => [
+        //   ...prev,
+        //   {
+        //     role: "user",
+        //     content: response.data.messages,
+        //   },
+        // ]);
         setMessages((prev) => [
           ...prev,
           {
             role: "assistant",
-            content: response.data.correction,
-            originalText: currentMessage,
-            correctedText: response.data.correction,
+            content: response.data.conversation,
+            correction: response.data.correction,
           },
         ]);
       }
@@ -112,20 +117,20 @@ export default function gcheck() {
   };
 
   const handleModeChange = (value: string) => {
-   
+    if (!params?.threadId) return;
 
     switch (value) {
       case "vtv":
-        router.push(`/voice-to-voice`);
+        router.push(`/voice-to-voice/`);
         break;
       case "vtt":
-        router.push(`/voice-to-text`);
+        router.push(`/vtt/`);
         break;
       case "vtv-gcheck":
         router.push(`/vtv-gcheck`);
         break;
-      case "ttt":
-        router.push(`/text-to-text`);
+      case "gcheck":
+        router.push(`/gcheck`);
         break;
       default:
         break;
@@ -137,7 +142,7 @@ export default function gcheck() {
       <header className="flex items-center px-4 h-16 border-b justify-between">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline">Grammar check</Button>
+            <Button variant="outline">Text-to-Text</Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuItem onClick={() => handleModeChange("vtv")}>
@@ -149,8 +154,8 @@ export default function gcheck() {
             <DropdownMenuItem onClick={() => handleModeChange("vtv-gcheck")}>
               vtv-gcheck
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleModeChange("ttt")}>
-              Text-to-Text
+            <DropdownMenuItem onClick={() => handleModeChange("gcheck")}>
+              Grammar check
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -158,21 +163,12 @@ export default function gcheck() {
       <main className="flex-1 overflow-auto p-4 w-full">
         <div className="mx-auto space-y-4 pb-20 max-w-screen-md">
           {messages?.map((message, index) => (
-            message.originalText && message.correctedText ? (
-              
-              <GrammarCorrectionMessage
-                key={index}
-                role={message.role}
-                originalText={message.originalText}
-                correctedText={message.correctedText}
-              />
-            ) : (
-              <ChatMessage
-                key={index}
-                role={message.role}
-                content={message.content}
-              />
-            )
+            <ChatMessage
+              key={index}
+              role={message.role}
+              content={message.content}
+              thought={message.correction}
+            />
           ))}
           <div ref={messagesEndRef} />
         </div>

@@ -26,7 +26,7 @@ const NoChatpage = () => {
         </div>
 
         {/* Welcome Text */}
-        <h2 className="text-2xl font-bold">Welcome to Ayam Fluenti Chat!</h2>
+        <h2 className="text-2xl font-bold">Welcome to Fluenti!</h2>
         <p className="text-base-content/60">
           Select Thread or Create a new Thread to Start Chatting
         </p>

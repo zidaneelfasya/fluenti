@@ -7,6 +7,7 @@ import { SidebarProvider } from "@/components/ui/sidebar";
 import { useState } from "react";
 import {VtvSidebar} from "@/components/VtvSidebar";
 import { GcheckSidebar } from "@/components/GcheckSidebar";
+import { TttGcheckSidebar } from "@/components/TttGcheckSidebar";
 
 export default function ChatLayout({
   children,
@@ -22,7 +23,7 @@ export default function ChatLayout({
           
           <div className="hidden lg:block"></div>
           {/* <ChatSidebar /> */}
-            <GcheckSidebar />
+            <TttGcheckSidebar />
           {children} {/* Gunakan children bukan impor langsung */}
         </div>
       </SidebarProvider>

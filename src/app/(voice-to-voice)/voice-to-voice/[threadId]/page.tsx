@@ -4,7 +4,12 @@ import AudioVisualizer from "@/components/AudioVisualizer";
 import { ChatMessage } from "@/components/ChatMessage";
 import { ThoughtMessage } from "@/components/ThoughtMessage";
 import { Button } from "@/components/ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import API from "@/helper/apiHelper";
 import HELPER from "@/helper/helper";
 import { useParams, useRouter } from "next/navigation";
@@ -61,27 +66,29 @@ const vtv = () => {
       formData.append("audio", audioBlob, "recording.webm");
       formData.append("thread_id", params?.threadId || "");
 
-      const response = await API.postWithAudio("/api/chat/audio", formData);
+      const response = await API.postWithAudio(
+        "/api/chat/voice-to-voice",
+        formData
+      );
 
       if (response.success) {
         // Update messages with the new response
-        setMessages(prev => [
+        setMessages((prev) => [
           ...prev,
-          { 
-            role: "user", 
+          {
+            role: "user",
             content: response.transcription,
-          }
+          },
         ]);
-        setMessages(prev => [
+        setMessages((prev) => [
           ...prev,
-          { 
-            role: "assistant", 
+          {
+            role: "assistant",
             content: response.conversation,
-            correction: response.correction
-          }
+            correction: response.correction,
+          },
         ]);
-        
-        
+
         // Set the audio URL to be played
         if (response.audioUrl) {
           setAudioUrl(response.audioUrl);
@@ -108,16 +115,22 @@ const vtv = () => {
 
   const handleModeChange = (value: string) => {
     if (!params?.threadId) return;
-    
+
     switch (value) {
-      case "gcheck":
-        router.push(`/gcheck/${params.threadId}`);
+      case "vtv":
+        router.push(`/vtv/`);
+        break;
+      case "ttt":
+        router.push(`/text-to-text/`);
         break;
       case "vtt":
-        router.push(`/vtt/${params.threadId}`);
+        router.push(`/voice-to-text/`);
         break;
-      case "fluenti":
-        // Add fluency route here if needed
+      case "vtv-gcheck":
+        router.push(`/vtv-gcheck`);
+        break;
+      case "gcheck":
+        router.push(`/gcheck`);
         break;
       default:
         break;
@@ -127,20 +140,22 @@ const vtv = () => {
   return (
     <div className="flex flex-col flex-1 h-screen">
       <header className="flex items-center px-4 h-16 border-b justify-between">
-        <h1 className="text-xl font-bold ml-4">Chat</h1>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline">Voice-to-Voice</Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={() => handleModeChange("gcheck")}>
-              Grammar Check
+            <DropdownMenuItem onClick={() => handleModeChange("ttt")}>
+              Text-to-text
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => handleModeChange("vtt")}>
               Voice-to-Text
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleModeChange("fluenti")}>
-              Fluenti
+            <DropdownMenuItem onClick={() => handleModeChange("vtv-gcheck")}>
+              vtv-gcheck
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleModeChange("gcheck")}>
+              Grammar check
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -148,8 +163,8 @@ const vtv = () => {
       <div className="flex flex-row h-[calc(100vh-4rem)]">
         {/* Audio Visualizer */}
         <div className="w-full flex flex-1 flex-col items-center justify-center p-16 sticky top-16">
-          <AudioVisualizer 
-            onRecordingComplete={handleRecordingComplete} 
+          <AudioVisualizer
+            onRecordingComplete={handleRecordingComplete}
             isLoading={isLoading}
           />
           {/* Hidden audio element for playing responses */}

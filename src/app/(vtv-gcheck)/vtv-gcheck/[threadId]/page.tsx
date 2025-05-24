@@ -61,7 +61,7 @@ const vtv = () => {
       formData.append("audio", audioBlob, "recording.webm");
       formData.append("thread_id", params?.threadId || "");
 
-      const response = await API.postWithAudio("/api/chat/grammar-check/vtt", formData);
+      const response = await API.postWithAudio("/api/chat/grammar-check/vtv", formData);
 
       if (response.success) {
         // Update messages with the new response
@@ -97,19 +97,31 @@ const vtv = () => {
     }
   };
 
+  useEffect(() => {
+    if (audioUrl && audioRef.current) {
+      audioRef.current.src = audioUrl;
+      audioRef.current
+        .play()
+        .catch((e) => console.error("Audio play error:", e));
+    }
+  }, [audioUrl]);
 
   const handleModeChange = (value: string) => {
-    if (!params?.threadId) return;
-    
     switch (value) {
-      case "gcheck":
-        router.push(`/gcheck/${params.threadId}`);
+      case "vtv":
+        router.push(`/voice-to-voice/`);
+        break;
+      case "ttt":
+        router.push(`/text-to-text/`);
         break;
       case "vtt":
-        router.push(`/vtt/${params.threadId}`);
+        router.push(`/voice-to-text/`);
         break;
-      case "fluenti":
-        // Add fluency route here if needed
+      case "vtv-gcheck":
+        router.push(`/vtv-gcheck`);
+        break;
+      case "gcheck":
+        router.push(`/gcheck`);
         break;
       default:
         break;
@@ -119,20 +131,22 @@ const vtv = () => {
   return (
     <div className="flex flex-col flex-1 h-screen">
       <header className="flex items-center px-4 h-16 border-b justify-between">
-        <h1 className="text-xl font-bold ml-4">Chat</h1>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline">Voice-to-Voice</Button>
+            <Button variant="outline">VTV-Gcheck</Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={() => handleModeChange("ttt")}>
+              Text-to-text
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleModeChange("vtv")}>
+              Voice-to-Voice
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleModeChange("vtv-gcheck")}>
+              vtv-gcheck
+            </DropdownMenuItem>
             <DropdownMenuItem onClick={() => handleModeChange("gcheck")}>
-              Grammar Check
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleModeChange("vtt")}>
-              Voice-to-Text
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleModeChange("fluenti")}>
-              Fluenti
+              Grammar check
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

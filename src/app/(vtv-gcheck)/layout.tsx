@@ -5,8 +5,8 @@ import HistoryChat from "@/components/HistoryChat";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { useState } from "react";
-import {VtvSidebar} from "@/components/VtvSidebar";
-import { GcheckSidebar } from "@/components/GcheckSidebar";
+
+import { VtvGcheckSidebar } from "@/components/VtvGcheckSidebar";
 
 export default function ChatLayout({
   children,
@@ -22,7 +22,7 @@ export default function ChatLayout({
           
           <div className="hidden lg:block"></div>
           {/* <ChatSidebar /> */}
-            <GcheckSidebar />
+            <VtvGcheckSidebar />
           {children} {/* Gunakan children bukan impor langsung */}
         </div>
       </SidebarProvider>

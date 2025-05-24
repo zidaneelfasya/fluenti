@@ -39,7 +39,7 @@ export default function Login() {
         username,
         password,
       });
-      if (res.success) router.push("/chat");
+      if (res.success) router.push("/");
     } catch (error) {
       console.error("Login error:", error);
     } finally {

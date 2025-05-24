@@ -11,11 +11,10 @@ export default async function getThreads(
     await connectToDatabase();
     await verifyAPI(req, res);
     const me = req.cookies.idUser;
-    const { feature } = req.body;
     console.log(me);
     const threads = await Thread.find({
       user_id: me,
-      feature: feature,
+      feature: "voice-to-text",
     });
     return res
       .status(200)
