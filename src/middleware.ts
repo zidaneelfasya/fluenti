@@ -10,11 +10,14 @@ export function middleware(request: NextRequest) {
   const publicPaths = [
     "/login",
     "/register",
+    "/",
     "/api/auth/login",
     "/api/auth/register",
     "/api/testdb"
 
   ];
+
+
 
   // Cek jika path saat ini adalah public path
   const isPublicPath = publicPaths.some((path) => 
@@ -30,7 +33,36 @@ export function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL("/login", request.url));
     }
   }
-  
+  if (!token) {
+    if (pathname.startsWith('/voice-to-voice')) {
+      return NextResponse.redirect(new URL("/login", request.url));
+    } 
+  }
+  if (!token) {
+    if (pathname.startsWith('/voice-to-text')) {
+      return NextResponse.redirect(new URL("/login", request.url));
+    } 
+  }
+  if (!token) {
+    if (pathname.startsWith('/vtv-gcheck')) {
+      return NextResponse.redirect(new URL("/login", request.url));
+    } 
+  }
+  if (!token) {
+    if (pathname.startsWith('/chat')) {
+      return NextResponse.redirect(new URL("/login", request.url));
+    } 
+  }
+  if (!token) {
+    if (pathname.startsWith('/vtt')) {
+      return NextResponse.redirect(new URL("/login", request.url));
+    } 
+  }
+  if (!token) {
+    if (pathname.startsWith('/gcheck')) {
+      return NextResponse.redirect(new URL("/login", request.url));
+    } 
+  }
 
   // Jika mencoba mengakses protected path tanpa token
   if (!token && !isPublicPath) {
@@ -38,7 +70,7 @@ export function middleware(request: NextRequest) {
   }
 
   // Jika sudah login tapi mencoba mengakses login/register
-  if (token && (pathname.startsWith("/login") || pathname.startsWith("/register"))) {
+  if (token && (pathname.startsWith("/login"))) {
     return NextResponse.redirect(new URL("/", request.url));
   }
 
