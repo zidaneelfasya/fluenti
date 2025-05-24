@@ -3,7 +3,7 @@ import mongoose, { Schema, Document } from "mongoose";
 const MessageSchema = new mongoose.Schema(
   {
     role: { type: String, enum: ["user", "assistant"], required: true },
-    content: { type: String, required: true },
+    content: { type: String },
     thought: { type: String },
     correction: { type: String },
     thread_id: { type: String, ref: "Thread", required: true },
