@@ -61,7 +61,7 @@ const vtv = () => {
       formData.append("audio", audioBlob, "recording.webm");
       formData.append("thread_id", params?.threadId || "");
 
-      const response = await API.postWithAudio("/api/chat/audio", formData);
+      const response = await API.postWithAudio("/api/chat/grammar-check/vtt", formData);
 
       if (response.success) {
         // Update messages with the new response
