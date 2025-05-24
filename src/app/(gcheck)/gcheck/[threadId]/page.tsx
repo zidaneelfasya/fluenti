@@ -17,6 +17,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useCallback } from "react";
 import axios from "axios";
 import debounce from "lodash/debounce";
+import { GrammarCorrectionMessage } from "@/components/GrammarCorrectionMessage";
 
 export default function gcheck() {
   const [messages, setMessages] = useState<any[]>([]);
@@ -80,7 +81,7 @@ export default function gcheck() {
       setTextareaValue(""); // Clear textarea immediately
       const userMessage = {
         role: "user",
-        content: textareaValue,
+        content: currentMessage,
         thought: "",
         thread_id: params?.threadId,
       };
@@ -93,14 +94,13 @@ export default function gcheck() {
       });
 
       if (response.data) {
-        // Update messages with the new response
-
         setMessages((prev) => [
           ...prev,
           {
             role: "assistant",
             content: response.data.correction,
-            
+            originalText: currentMessage,
+            correctedText: response.data.correction,
           },
         ]);
       }
@@ -158,11 +158,21 @@ export default function gcheck() {
       <main className="flex-1 overflow-auto p-4 w-full">
         <div className="mx-auto space-y-4 pb-20 max-w-screen-md">
           {messages?.map((message, index) => (
-            <ChatMessage
-              key={index}
-              role={message.role}
-              content={message.content}
-            />
+            message.originalText && message.correctedText ? (
+              
+              <GrammarCorrectionMessage
+                key={index}
+                role={message.role}
+                originalText={message.originalText}
+                correctedText={message.correctedText}
+              />
+            ) : (
+              <ChatMessage
+                key={index}
+                role={message.role}
+                content={message.content}
+              />
+            )
           ))}
           <div ref={messagesEndRef} />
         </div>
