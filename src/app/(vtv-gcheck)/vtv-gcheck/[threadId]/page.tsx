@@ -8,9 +8,9 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import API from "@/helper/apiHelper";
 import HELPER from "@/helper/helper";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 
-const vtv = () => {
+const VtvGcheck = () => {  // Changed component name to start with uppercase
   const [messages, setMessages] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
@@ -19,7 +19,7 @@ const vtv = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  const fetchMessages = async () => {
+  const fetchMessages = useCallback(async () => {  // Added useCallback
     if (!params?.threadId) return;
 
     try {
@@ -39,11 +39,11 @@ const vtv = () => {
         text: "Terjadi kesalahan saat memuat pesan",
       });
     }
-  };
+  }, [params?.threadId]);
 
   useEffect(() => {
     fetchMessages();
-  }, [params?.threadId]);
+  }, [params?.threadId, fetchMessages]);  // Added fetchMessages to dependencies
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -64,7 +64,6 @@ const vtv = () => {
       const response = await API.postWithAudio("/api/chat/grammar-check/vtv", formData);
 
       if (response.success) {
-        // Update messages with the new response
         setMessages(prev => [
           ...prev,
           { 
@@ -81,8 +80,6 @@ const vtv = () => {
           }
         ]);
         
-        
-        // Set the audio URL to be played
         if (response.audioUrl) {
           setAudioUrl(response.audioUrl);
         }
@@ -152,17 +149,15 @@ const vtv = () => {
         </DropdownMenu>
       </header>
       <div className="flex flex-row h-[calc(100vh-4rem)]">
-        {/* Audio Visualizer */}
         <div className="w-full flex flex-1 flex-col items-center justify-center p-16 sticky top-16">
           <AudioVisualizer 
             onRecordingComplete={handleRecordingComplete} 
             isLoading={isLoading}
+            audioUrl={audioUrl}
           />
-          {/* Hidden audio element for playing responses */}
           <audio ref={audioRef} hidden />
         </div>
 
-        {/* Messages Area */}
         <div className="flex shadow-[-4px_0_6px_-1px_rgba(0,0,0,0.1),2px_0_4px_-2px_rgba(0,0,0,0.1)] dark:shadow-[-4px_0_6px_-1px_rgba(0,0,0,0.3),2px_0_4px_-2px_rgba(0,0,0,0.2)]">
           <div className="bg-sidebarcolor w-[30vw] flex flex-col h-full px-4">
             <div className="flex-1 overflow-y-auto space-y-4 pb-20">
@@ -183,4 +178,4 @@ const vtv = () => {
   );
 };
 
-export default vtv;
+export default VtvGcheck;  // Updated export to match new component name
