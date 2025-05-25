@@ -13,9 +13,9 @@ import {
 import API from "@/helper/apiHelper";
 import HELPER from "@/helper/helper";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 
-const vtv = () => {
+const VTV = () => {  // Changed from vtv to VTV
   const [messages, setMessages] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
@@ -24,7 +24,7 @@ const vtv = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  const fetchMessages = async () => {
+  const fetchMessages = useCallback(async () => {  // Added useCallback
     if (!params?.threadId) return;
 
     try {
@@ -44,11 +44,11 @@ const vtv = () => {
         text: "Terjadi kesalahan saat memuat pesan",
       });
     }
-  };
+  }, [params?.threadId]);
 
   useEffect(() => {
     fetchMessages();
-  }, [params?.threadId]);
+  }, [params?.threadId, fetchMessages]);  // Added fetchMessages to dependencies
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -192,4 +192,4 @@ const vtv = () => {
   );
 };
 
-export default vtv;
+export default VTV;  

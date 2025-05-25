@@ -18,7 +18,7 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import axios from "axios";
 import debounce from "lodash/debounce";
 
-export default function gcheck() {
+export default function GCheck() {  // Changed from gcheck to GCheck
   const [messages, setMessages] = useState<any[]>([]);
   const [messageInput, setMessageInput] = useState("");
 
@@ -31,14 +31,14 @@ export default function gcheck() {
   const router = useRouter();
 
   // Memisahkan logika handle input dengan debounce
-  const handleInputChange = useCallback(
-    debounce((value: string) => {
-      setMessageInput(value);
-    }, 100),
-    []
-  );
+  const handleInputChange = useCallback((value: string) => {
+    const debouncedFn = debounce((val: string) => {
+      setMessageInput(val);
+    }, 100);
+    debouncedFn(value);
+  }, []);
 
-  const fetchMessages = async () => {
+  const fetchMessages = useCallback(async () => {  // Added useCallback to fix the dependency warning
     if (!params?.threadId) return;
 
     try {
@@ -58,11 +58,11 @@ export default function gcheck() {
         text: "Terjadi kesalahan saat memuat pesan",
       });
     }
-  };
+  }, [params?.threadId]);
 
   useEffect(() => {
     fetchMessages();
-  }, [params?.threadId]);
+  }, [params?.threadId, fetchMessages]);  // Added fetchMessages to dependencies
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -92,14 +92,6 @@ export default function gcheck() {
       });
 
       if (response.data) {
-        // // Update messages with the new response
-        // setMessages((prev) => [
-        //   ...prev,
-        //   {
-        //     role: "user",
-        //     content: response.data.messages,
-        //   },
-        // ]);
         setMessages((prev) => [
           ...prev,
           {

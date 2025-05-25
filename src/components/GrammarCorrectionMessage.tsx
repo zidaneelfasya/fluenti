@@ -5,7 +5,7 @@ import { diffWords } from "diff";
 interface GrammarCorrectionMessageProps {
   originalText: string;
   correctedText: string;
-  role: "user" | "assistant";
+  role: string;
 }
 
 export const GrammarCorrectionMessage: React.FC<GrammarCorrectionMessageProps> = ({
