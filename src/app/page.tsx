@@ -12,7 +12,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-
 import { useEffect, useState } from "react";
 
 export default function Home() {
@@ -20,12 +19,6 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  // useEffect(()=>{
-  //   HELPER.Axios('POST', 'api/auth/logout').then(res => {
-  //   HELPER.Axios('POST', 'api/logout').then(res => {
-  //     if(res.success) router.replace('/login')
-  //   })
-  // }, [])
   useEffect(() => {
     // Check authentication status when component mounts
     HELPER.Axios('GET', 'api/auth/getcookie').then(res => {
@@ -33,7 +26,7 @@ export default function Home() {
       if (data) {
         setIsLoggedIn(true);
       }
-    });6
+    });
   }, []);
   
   const handleLogout = async () => {
@@ -46,40 +39,33 @@ export default function Home() {
   };
   
   return (
-
-    <div className="min-h-screen bg-[#12141F] text-white  ">
+    <div className="min-h-screen bg-[#12141F] text-white">
       {/* Navigation */}
       <nav className="flex items-center justify-between py-4 px-4 md:px-28">
         <div className="flex items-center space-x-4 md:space-x-8">
           <div className="flex items-center space-x-2">
-            <img src="logo-fluenti.png" alt="" className="w-8 md:w-auto" />
+            <Image 
+              src="/logo-fluenti.png" 
+              alt="Fluenti Logo" 
+              width={32}
+              height={32}
+              className="w-8 md:w-auto"
+            />
             <span className="text-lg md:text-xl font-bold">fluenti</span>
           </div>
           <div className="hidden md:flex space-x-8">
-            <a
-              href="#"
-              className="text-purple-400 hover:text-purple-300 transition-colors"
-            >
+            <Link href="#" className="text-purple-400 hover:text-purple-300 transition-colors">
               Product
-            </a>
-            <a
-              href="#"
-              className="text-purple-400 hover:text-purple-300 transition-colors"
-            >
+            </Link>
+            <Link href="#" className="text-purple-400 hover:text-purple-300 transition-colors">
               Services
-            </a>
-            <a
-              href="#"
-              className="text-purple-400 hover:text-purple-300 transition-colors"
-            >
+            </Link>
+            <Link href="#" className="text-purple-400 hover:text-purple-300 transition-colors">
               API
-            </a>
-            <a
-              href="#"
-              className="text-purple-400 hover:text-purple-300 transition-colors"
-            >
+            </Link>
+            <Link href="#" className="text-purple-400 hover:text-purple-300 transition-colors">
               Documentation
-            </a>
+            </Link>
           </div>
         </div>
         <div className="flex space-x-2 md:space-x-4">
@@ -127,9 +113,9 @@ export default function Home() {
                 </button>
               </Link>
               <Link href="/register">
-              <button className="px-3 md:px-6 py-2 text-sm md:text-base bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all transform hover:scale-105">
-                Sign Up
-              </button>
+                <button className="px-3 md:px-6 py-2 text-sm md:text-base bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg hover:from-purple-700 hover:to-pink-700 transition-all transform hover:scale-105">
+                  Sign Up
+                </button>
               </Link>
             </>
           )}
@@ -156,37 +142,49 @@ export default function Home() {
               </div>
               <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4">
                 <Link href="/vtv-gcheck">
-                <button className="px-6 md:px-8 py-3 md:py-4 bg-white text-gray-900 rounded-lg font-semibold hover:bg-gray-100 transition-all transform hover:scale-105">
-                  Try On Fluenti
-                </button>
+                  <button className="px-6 md:px-8 py-3 md:py-4 bg-white text-gray-900 rounded-lg font-semibold hover:bg-gray-100 transition-all transform hover:scale-105">
+                    Try On Fluenti
+                  </button>
                 </Link>
                 <Link href="/register">
-                <button className="px-6 md:px-8 py-3 md:py-4 border-2 border-gray-600 rounded-lg font-semibold hover:border-purple-500 hover:bg-purple-500/10 transition-all">
-                  Make an Account
-                </button>
+                  <button className="px-6 md:px-8 py-3 md:py-4 border-2 border-gray-600 rounded-lg font-semibold hover:border-purple-500 hover:bg-purple-500/10 transition-all">
+                    Make an Account
+                  </button>
                 </Link>
               </div>
             </div>
           </div>
-          <img className="w-full" src="hero.png" alt="" />
+          <Image 
+            src="/hero.png" 
+            alt="Hero Image" 
+            width={800}
+            height={600}
+            className="w-full"
+          />
         </div>
       </section>
 
       {/* Second Section */}
-      <section className="min-h-screen  px-4 md:px-6 pt-10 md:py-20 max-w-7xl mx-auto">
+      <section className="min-h-screen px-4 md:px-6 pt-10 md:py-20 max-w-7xl mx-auto">
         <div className="grid lg:grid-cols-2 gap-8 md:gap-12 items-center">
-          <img src="about.png" alt="" className="w-full" />
+          <Image 
+            src="/about.png" 
+            alt="About Image" 
+            width={800}
+            height={600}
+            className="w-full"
+          />
           {/* Content */}
           <div className="space-y-6 md:space-y-8 text-center lg:text-left">
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight">
-              The More you Speak,
+              The More You Speak,
               <br />
               Stronger You Are
             </h2>
             <p className="text-lg md:text-xl text-gray-300 leading-relaxed">
               Our application is designed to help you speak English confidently
               through real-time, AI-powered conversations. You can practice
-              naturally, as if you're talking to a native speaker. The
+              naturally, as if you&apos;re talking to a native speaker. The
               intelligent system listens, understands, and gives instant
               feedback on your pronunciation, grammar, and fluency — so you
               learn and improve as you speak.
@@ -194,13 +192,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      {/* Background decorative elements */}
-      {/* <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 -left-20 w-40 h-40 bg-purple-600 rounded-full mix-blend-multiply filter blur-xl opacity-10 animate-pulse"></div>
-        <div className="absolute top-3/4 -right-20 w-40 h-40 bg-pink-600 rounded-full mix-blend-multiply filter blur-xl opacity-10 animate-pulse"></div>
-        <div className="absolute bottom-1/4 left-1/3 w-20 h-20 bg-blue-600 rounded-full mix-blend-multiply filter blur-xl opacity-10 animate-pulse"></div>
-      </div> */}
     </div>
   );
 }
