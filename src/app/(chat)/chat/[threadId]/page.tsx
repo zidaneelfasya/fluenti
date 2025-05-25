@@ -12,7 +12,12 @@ export default function Chatpage() {
   const [messageInput, setMessageInput] = useState("");
   const [streamedMessage, setStreamedMessage] = useState("");
   const [streamedThought, setStreamedThought] = useState("");
-  const [messages, setMessages] = useState<any[]>([]);
+  const [messages, setMessages] = useState<{
+    role: string;
+    content: string;
+    thought?: string;
+    thread_id?: string;
+  }[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const params = useParams<{ threadId: string }>();
   const messagesEndRef = useRef<HTMLDivElement>(null);

@@ -1,8 +1,6 @@
 "use client"; // Tambahkan ini di paling atas
 
 import { ChatSidebar } from "@/components/ChatSidebar";
-import HistoryChat from "@/components/HistoryChat";
-import { ThemeProvider } from "@/components/ThemeProvider";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { useState } from "react";
 
