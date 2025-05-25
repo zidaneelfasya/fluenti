@@ -153,7 +153,6 @@ const VtvGcheck = () => {  // Changed component name to start with uppercase
           <AudioVisualizer 
             onRecordingComplete={handleRecordingComplete} 
             isLoading={isLoading}
-            audioUrl={audioUrl}
           />
           <audio ref={audioRef} hidden />
         </div>
