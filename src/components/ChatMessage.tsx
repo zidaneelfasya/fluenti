@@ -3,7 +3,7 @@ import { ThoughtMessage } from "./ThoughtMessage";
 import { useEffect, useRef } from "react";
 
 interface ChatMessageProps {
-  role: "user" | "assistant";
+  role: string;
   content: string;
   thought?: string;
   audioUrl?: string 
