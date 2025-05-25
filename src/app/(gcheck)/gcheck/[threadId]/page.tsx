@@ -1,8 +1,6 @@
 "use client";
 
-import AudioVisualizer from "@/components/AudioVisualizer";
 import { ChatMessage } from "@/components/ChatMessage";
-import { ThoughtMessage } from "@/components/ThoughtMessage";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -11,7 +9,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import API from "@/helper/apiHelper";
 import HELPER from "@/helper/helper";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useCallback } from "react";
@@ -19,27 +16,32 @@ import axios from "axios";
 import debounce from "lodash/debounce";
 import { GrammarCorrectionMessage } from "@/components/GrammarCorrectionMessage";
 
-export default function gcheck() {
-  const [messages, setMessages] = useState<any[]>([]);
-  const [messageInput, setMessageInput] = useState("");
-
+export default function GCheck() {
+  const [messages, setMessages] = useState<{
+    role: "user" | "assistant";
+    content: string;
+    originalText?: string;
+    correctedText?: string;
+  }[]>([]);
   const [textareaValue, setTextareaValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const params = useParams<{ threadId: string }>();
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const audioRef = useRef<HTMLAudioElement>(null);
   const router = useRouter();
 
-  // Memisahkan logika handle input dengan debounce
-  const handleInputChange = useCallback(
-    debounce((value: string) => {
-      setMessageInput(value);
-    }, 100),
-    []
-  );
+  const [messageInput, setMessageInput] = useState("");
+  const [audioUrl, setAudioUrl] = useState<string | null>(null);
+  const audioRef = useRef<HTMLAudioElement>(null);
 
-  const fetchMessages = async () => {
+  // Memisahkan logika handle input dengan debounce
+  const handleInputChange = useCallback((value: string) => {
+    const debouncedFn = debounce((val: string) => {
+      setMessageInput(val);
+    }, 100);
+    debouncedFn(value);
+  }, []);
+
+  const fetchMessages = useCallback(async () => {
     if (!params?.threadId) return;
 
     try {
@@ -59,11 +61,11 @@ export default function gcheck() {
         text: "Terjadi kesalahan saat memuat pesan",
       });
     }
-  };
+  }, [params?.threadId]);
 
   useEffect(() => {
     fetchMessages();
-  }, [params?.threadId]);
+  }, [fetchMessages]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -80,10 +82,10 @@ export default function gcheck() {
       const currentMessage = textareaValue.trim();
       setTextareaValue(""); // Clear textarea immediately
       const userMessage = {
-        role: "user",
+        role: "user" as const,
         content: currentMessage,
-        thought: "",
-        thread_id: params?.threadId,
+        originalText: currentMessage,
+        correctedText: undefined
       };
 
       setMessages((prev) => [...prev, userMessage]);
@@ -112,8 +114,6 @@ export default function gcheck() {
   };
 
   const handleModeChange = (value: string) => {
-   
-
     switch (value) {
       case "vtv":
         router.push(`/voice-to-voice`);
@@ -159,7 +159,6 @@ export default function gcheck() {
         <div className="mx-auto space-y-4 pb-20 max-w-screen-md">
           {messages?.map((message, index) => (
             message.originalText && message.correctedText ? (
-              
               <GrammarCorrectionMessage
                 key={index}
                 role={message.role}
