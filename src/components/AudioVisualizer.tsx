@@ -104,7 +104,7 @@ const AudioVisualizer = ({ onRecordingComplete, isLoading, audioUrl }: AudioVisu
     analyser.connect(audioContext.destination);
     
     const bufferLength = analyser.frequencyBinCount;
-    dataArrayRef.current = new Uint8Array(bufferLength);
+    dataArrayRef.current = new Uint8Array(new ArrayBuffer(bufferLength));
     
     drawVisualizer();
   };
@@ -127,7 +127,7 @@ const AudioVisualizer = ({ onRecordingComplete, isLoading, audioUrl }: AudioVisu
       source.connect(analyser);
       
       const bufferLength = analyser.frequencyBinCount;
-      dataArrayRef.current = new Uint8Array(bufferLength);
+      dataArrayRef.current = new Uint8Array(new ArrayBuffer(bufferLength));
       
       mediaRecorderRef.current = new MediaRecorder(stream);
       mediaRecorderRef.current.ondataavailable = (event) => {
@@ -168,7 +168,8 @@ const AudioVisualizer = ({ onRecordingComplete, isLoading, audioUrl }: AudioVisu
       return;
     }
     
-    analyser.getByteFrequencyData(dataArray);
+    const bufferLength = analyser.frequencyBinCount;
+    dataArrayRef.current = new Uint8Array(new ArrayBuffer(bufferLength));
     
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
