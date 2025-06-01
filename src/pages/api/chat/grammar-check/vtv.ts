@@ -5,6 +5,7 @@ import ollama from "ollama";
 import { IncomingForm } from "formidable";
 import fs from "fs";
 import axios from "axios";
+import { ElevenLabsClient, play } from "@elevenlabs/elevenlabs-js";
 
 export const config = {
   api: {
@@ -38,13 +39,16 @@ async function transcribeWithWhisper(audioBuffer: Buffer): Promise<string> {
   return result.text;
 }
 
-async function textToSpeechWithElevenLabs(
-  text: string
-): Promise<string | null> {
+async function textToSpeechWithElevenLabs(text: string): Promise<string | null> {
   try {
-    const ELEVENLABS_API_KEY = process.env.ELEVENLABS_API_KEY;
-    const ELEVENLABS_VOICE_ID = process.env.ELEVENLABS_VOICE_ID;
     
+    const ELEVENLABS_API_KEY = "sk_9ea1572cd534a3012b308c250527652b28ccd4fab0d2fdc7";
+    const ELEVENLABS_VOICE_ID = process.env.ELEVENLABS_VOICE_ID;
+
+    if (!ELEVENLABS_API_KEY || !ELEVENLABS_VOICE_ID) {
+      throw new Error("ElevenLabs credentials not configured");
+    }
+
     const response = await axios.post(
       `https://api.elevenlabs.io/v1/text-to-speech/${ELEVENLABS_VOICE_ID}`,
       {
@@ -62,13 +66,26 @@ async function textToSpeechWithElevenLabs(
           accept: "audio/mpeg",
         },
         responseType: "arraybuffer",
+        timeout: 10000, // 10 detik timeout
       }
     );
+
+    // Debugging response
+    console.log("TTS Response Status:", response.status);
+    console.log("TTS Response Headers:", response.headers);
 
     const audioBuffer = Buffer.from(response.data);
     return `data:audio/mpeg;base64,${audioBuffer.toString("base64")}`;
   } catch (error) {
-    console.error("Error with ElevenLabs TTS:", error);
+    if (axios.isAxiosError(error)) {
+      console.error("ElevenLabs API Error Details:", {
+        status: error.response?.status,
+        data: error.response?.data,
+        headers: error.response?.headers,
+      });
+    } else {
+      console.error("Unexpected Error:", error);
+    }
     return null;
   }
 }
@@ -182,7 +199,7 @@ export default async function handler(
     });
 
     const conversation = conversationResponse.message.content;
-
+console.log(conversation);
     let audioUrl = null;
     // Generate audio from the conversation
     if (mode == true) {
@@ -192,6 +209,7 @@ export default async function handler(
     } else if (mode == false) {
       audioUrl = await textToSpeechWithElevenLabs(conversation);
     }
+    console.log(audioUrl)
 
     // Save AI message
     const newMessage = new Message({
