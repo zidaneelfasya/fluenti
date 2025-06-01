@@ -130,7 +130,7 @@ export default function Home() {
               <div className="">
                 <p className="text-purple-400 text-base md:text-lg mb-2 md:mb-4">Fluenti</p>
                 <h1 className="text-3xl md:text-5xl lg:text-7xl font-bold leading-tight mb-4 md:mb-6">
-                  Learning By Speech ayam goreng
+                  Learning By Speech
                 </h1>
                 <p className="text-lg md:text-xl text-gray-300 leading-relaxed mb-6 md:mb-8">
                   Speak English with Confidence. Powered by AI.
