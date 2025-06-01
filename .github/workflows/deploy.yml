@@ -1,0 +1,33 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Dependencies
+        run: npm install  # Ganti dengan perintah instalasi proyek Anda
+      - name: Run Tests
+        run: npm test    # Ganti dengan perintah tes Anda
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to VPS via SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.VPS_IP }}           # Contoh: '123.123.123.123'
+          username: root                        # Ganti jika pakai user lain
+          key: ${{ secrets.SSH_PRIVATE_KEY }}   # Private key untuk akses VPS
+          script: |
+            cd /var/www/your-app
+            git pull origin main
+            npm install
+            pm2 restart all    # Restart aplikasi jika pakai PM2
+            # Jika pakai Docker:
+            # docker compose down && docker compose up -d
