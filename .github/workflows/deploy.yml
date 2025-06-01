@@ -1,33 +1,34 @@
-name: CI/CD Pipeline
+name: Deploy Next.js to VPS
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [main]
 
 jobs:
-  test:
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Install Dependencies
-        run: npm install  # Ganti dengan perintah instalasi proyek Anda
-      - name: Run Tests
-        run: npm test    # Ganti dengan perintah tes Anda
 
-  deploy:
-    needs: test
-    runs-on: ubuntu-latest
-    steps:
-      - name: Deploy to VPS via SSH
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18  # Sesuaikan versi
+
+      - name: Install Dependencies
+        run: |
+          npm install
+          npm run build
+
+      - name: Deploy to VPS
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.VPS_IP }}           # Contoh: '123.123.123.123'
-          username: root                        # Ganti jika pakai user lain
-          key: ${{ secrets.SSH_PRIVATE_KEY }}   # Private key untuk akses VPS
+          host: ${{ secrets.VPS_IP }}
+          username: root
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd /var/www/your-app
+            cd /var/www/fluenti
             git pull origin main
             npm install
-            pm2 restart all    # Restart aplikasi jika pakai PM2
-            # Jika pakai Docker:
-            # docker compose down && docker compose up -d
+            npm run build
+            pm2 restart fluenti
