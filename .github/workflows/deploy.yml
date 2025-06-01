@@ -13,7 +13,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 18  # Sesuaikan versi
+          node-version: 18 # Sesuaikan versi
 
       - name: Install Dependencies
         run: |
@@ -27,8 +27,13 @@ jobs:
           username: root
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
+            source ~/.bashrc  # Load PATH
             cd /var/www/fluenti
             git pull origin main
+            export NVM_DIR=~/.nvm
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # Jika pakai NVM
+            node -v  # Debug
+            npm -v   # Debug
             npm install
             npm run build
             pm2 restart fluenti
