@@ -61,7 +61,7 @@ const VtvGcheck = () => {  // Changed component name to start with uppercase
       formData.append("audio", audioBlob, "recording.webm");
       formData.append("thread_id", params?.threadId || "");
 
-      const response = await API.postWithAudio("/api/chat/grammar-check/vtv", formData);
+      const response = await API.postWithAudio("/api/chat/audio", formData);
 
       if (response.success) {
         setMessages(prev => [
