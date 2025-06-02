@@ -1,4 +1,4 @@
-name: Deploy Next.js to VPS
+name: Deploy Fluenti to VPS
 
 on:
   push:
@@ -13,9 +13,9 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 18 # Sesuaikan versi
+          node-version: 18
 
-      - name: Install Dependencies
+      - name: Install Dependencies Fluenti
         run: |
           npm install
           npm run build
